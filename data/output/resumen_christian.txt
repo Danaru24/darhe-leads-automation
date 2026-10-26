@@ -1,0 +1,49 @@
+ASUNTO: Plan de Llamadas y Priorización de Leads - DARHE
+
+Hola Christian,
+
+Aquí tienes el resumen ejecutivo de operaciones comerciales con la priorización y el plan de acción para hoy.
+
+1. PANORAMA DE ENTRADA
+Recibimos un total de 15 registros en este ciclo. Tras el proceso de limpieza y deduplicación, consolidamos 2 duplicados (ID 3 fusionado con el ID 1, y ID 14 fusionado con el ID 4), resultando en 13 leads únicos listos para gestionarse. Además, descartamos 2 registros de basura comercial y spam (el lead ID 5 de la promo web falsa y el lead ID 11 que resultó ser un competidor intentando pescar precios).
+
+2. A QUIÉN LLAMAR PRIMERO HOY (TOP 5 PRIORITARIO)
+Estos son los prospectos de mayor valor y urgencia que debes contactar de inmediato:
+
+1. Laura Méndez (Transportes del Bajío SA de CV) - Teléfono: +525512345678
+Contexto del dolor: Tienen 90 operadores y buscan dejar urgentemente de pagar viáticos en efectivo. Ya escribieron por web y WhatsApp pidiendo cotización esta semana.
+Abordaje: Contactar de inmediato por WhatsApp, validar la cotización solicitada y ofrecer una llamada rápida para cerrar la transición de efectivo a digital.
+
+2. Ana Torres (Constructora Pilar) - Teléfono: +525511112222
+Contexto del dolor: Pagan a cuadrillas por semana y califica el proceso como un caos total. Pide una demostración de la plataforma.
+Abordaje: Llamar para agendar la demo esta misma semana y presentar la solución específica de control y pago de cuadrillas.
+
+3. Sofía Lara (Constructora Lara e Hijos) - Teléfono: +528122223333
+Contexto del dolor: Arrancan una obra grande en noviembre con 60 trabajadores eventuales y tienen urgencia por resolver el control.
+Abordaje: Contactar urgente por teléfono y correo para asegurar la solución antes de que arranque su obra en noviembre.
+
+4. Fernanda Ríos (Logística Ríos) - Teléfono: +525530304040
+Contexto del dolor: Operan con una plantilla aproximada de 60 colaboradores y necesitan controlar de manera estricta el gasto de gasolina.
+Abordaje: Llamar para agendar una demo enfocada en el módulo de control de combustible para flotillas.
+
+5. Ricardo Salas (Grupo Gastronómico Salas) - Teléfono: +523398765432
+Contexto del dolor: Es un referido VIP de un cliente actual, cuenta con 6 sucursales operando y un volumen de 250 empleados.
+Abordaje: Llamar de cortesía mencionando al cliente que los recomendó, e indagar en sus retos específicos de control de gastos en las 6 sucursales.
+
+3. CASOS QUE REQUIEREN TU VALIDACIÓN HUMANA ANTES DE AVANZAR
+Los siguientes leads tienen detalles particulares donde requiero tu decisión rápida:
+- Laura Méndez (ID 1): Hay una ligera diferencia entre los 120 empleados reportados y los 90 operadores que menciona; decide si cotizamos directo para 90 o 120.
+- Ricardo Salas (ID 6): El referido VIP de 250 empleados no especificó dolor; valida si lo tratas como cuenta clave directamente.
+- Mónica Vega (ID 7): Es un despacho contable de 8 empleados buscando opciones para sus clientes; decide si abres canal de alianza B2B con ellos.
+- Pedro Gómez (ID 8): Fletes de 35 empleados que solo puso "llámenme" sin correo; decide si marcas al teléfono ciegamente para pescar datos.
+- Sofía Lara (ID 9): Reportaba 18 en base pero su mensaje dice 60 trabajadores para noviembre; confirma si registramos la cuenta con base en 60.
+- Daniel Kim (ID 10): Restaurante con 40 empleados cuyo mensaje está en inglés; decide si un agente bilingüe toma el caso.
+- Carlos Ortiz (ID 11): Empresa de la competencia pidiendo comisiones; confirma el bloqueo definitivo del contacto.
+- Fernanda Ríos (ID 12): No tenía empleados en columna pero escribió "somos como 60"; valida si adoptamos la cifra de 60 para la propuesta.
+- Hugo Paredes (ID 13): Tacos Paredes de 25 empleados preguntando "¿Cuánto cuesta?" desde un Gmail; decide si mandas lista de precios estándar o los fuerzas a llamada.
+- Irene Campos (ID 15): Hotel con 70 empleados y rotación alta; decide si la hotelería califica como segmento válido para entrar en la cartera de Empresario.
+
+4. SEGUIMIENTO DEL RESTO DE PROSPECTOS (CATEGORÍA B Y C)
+Para los leads restantes (Jorge Ruiz en Restaurante La Fonda con 12 empleados y Daniel Kim en Seoul BBQ), la instrucción es enviarles un correo o mensaje automatizado con información general de nuestros productos. No requieren llamadas en frío el día de hoy hasta que respondan al primer estímulo digital.
+
+Quedo atento a tus comentarios para ajustar cualquier estrategia en el embudo.

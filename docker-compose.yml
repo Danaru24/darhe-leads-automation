@@ -1,0 +1,80 @@
+services:
+  n8n:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: darhe-n8n-automation:1.0.0
+    container_name: darhe-n8n-engine
+    restart: unless-stopped
+    ports:
+      - "${N8N_PORT:-5677}:5677"
+    env_file:
+      - .env
+    environment:
+      - N8N_RESTRICT_FILE_ACCESS_TO=/data
+      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB:-darhe_crm}
+      - DB_POSTGRESDB_USER=${POSTGRES_USER:-darhe_admin}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD:-darhe_local_pass}
+    volumes:
+      - ./data:/data
+      - ./workflows:/workflows
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - darhe-net
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: darhe-postgres-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-darhe_admin}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-darhe_local_pass}
+      - POSTGRES_DB=${POSTGRES_DB:-darhe_crm}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - ./sql/01_supabase_schema.sql:/docker-entrypoint-initdb.d/01_supabase_schema.sql:ro
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-darhe_admin} -d ${POSTGRES_DB:-darhe_crm}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - darhe-net
+
+  # Segundo contenedor ligero para enviar leads por Webhook (se corre bajo demanda o con profile 'test')
+  lead-feeder:
+    image: python:3.12-alpine
+    container_name: darhe-lead-feeder
+    profiles: ["webhook-test"]
+    depends_on:
+      n8n:
+        condition: service_healthy
+    environment:
+      - WEBHOOK_URL=http://darhe-n8n-engine:5677/webhook/darhe-leads
+      - CSV_PATH=/data/input/leads_test_darhe.csv
+    volumes:
+      - ./data:/data:ro
+      - ./feeder:/app:ro
+    command: ["python", "/app/send_webhook.py"]
+    networks:
+      - darhe-net
+
+# La inicialización (tabla Postgres, credenciales e import único del workflow)
+# la hace entrypoint.sh como ENTRYPOINT de la imagen n8n (ver Dockerfile).
+
+volumes:
+  n8n_data:
+  postgres_data:
+
+networks:
+  darhe-net:
+    driver: bridge

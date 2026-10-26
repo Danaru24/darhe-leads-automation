@@ -1,0 +1,11 @@
+# Variables de entorno y secretos (Regla crítica de la vacante)
+.env
+
+# Datos internos de sesión de n8n y Postgres
+.n8n/
+postgres_data/
+
+# Archivos de sistema y caché de Python
+__pycache__/
+*.pyc
+.DS_Store

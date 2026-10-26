@@ -1,9 +1,9 @@
 {
-  "name": "My workflow",
+  "name": "DARHE - Pipeline Automatizado de Leads y Resumen Comercial",
   "nodes": [
     {
       "parameters": {},
-      "id": "bf6be37b-fb8e-4980-82a7-1082c58c5c34",
+      "id": "4b2f6b62-8930-44f9-b802-a330dcdef6d2",
       "name": "Manual Trigger",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
@@ -17,7 +17,7 @@
         "fileSelector": "/data/input/leads_test_darhe.csv",
         "options": {}
       },
-      "id": "ebca9a70-daff-4a5a-b8f9-3735330ed42b",
+      "id": "67bec2b8-707f-4c95-a78d-d51f9a99f8e9",
       "name": "Leer CSV de Disco",
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
@@ -32,7 +32,7 @@
           "headerRow": true
         }
       },
-      "id": "e2922385-7519-4683-96fd-51380aaf246b",
+      "id": "8e1c6d0f-cf3e-4868-8206-39a2a0d960bd",
       "name": "Extraer Filas CSV",
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1,
@@ -48,7 +48,7 @@
         "responseMode": "responseNode",
         "options": {}
       },
-      "id": "066cf759-971f-42f4-ac8e-8f03d87f2fc7",
+      "id": "56b42adb-ecfe-449c-838e-8162c1a841a3",
       "name": "Webhook Ingesta Leads",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
@@ -62,7 +62,7 @@
       "parameters": {
         "jsCode": "// Unifica la entrada tolerando payloads de Webhook y extracción directa de CSV con BOM (\\ufeff)\nconst items = $input.all();\nconst rows = [];\n\nfor (const item of items) {\n  const j = item.json || {};\n  const body = j.body;\n\n  if (body) {\n    if (Array.isArray(body)) {\n      rows.push(...body);\n    } else if (body.leads && Array.isArray(body.leads)) {\n      body.origen = 'webhook'\n      rows.push(...body.leads);\n    } else if (typeof body === 'object' && (body.id !== undefined || body['\\ufeffid'] !== undefined)) {\n      rows.push(body);\n    }\n  } else {\n    // Proviene del nodo CSV\n    if (j.id !== undefined || j['\\ufeffid'] !== undefined) {\n      j.origen = \"csv\"\n      rows.push(j);\n    }\n  }\n}\n\n// Limpia el carácter BOM (\\ufeff) de las llaves de cada fila\nreturn rows.map(r => {\n  const cleanRow = {};\n  for (const [key, val] of Object.entries(r)) {\n    const cleanKey = key.replace(/^\\ufeff/, '').trim();\n    cleanRow[cleanKey] = val;\n  }\n  return { json: cleanRow };\n});"
       },
-      "id": "48ed3eb6-ca71-40c7-8b51-734e95c3f505",
+      "id": "cfd27138-8606-431b-8120-9b837f5d00e2",
       "name": "1. Unificar Entrada (CSV o Webhook)",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -75,7 +75,7 @@
       "parameters": {
         "options": {}
       },
-      "id": "821aab8f-4089-45da-ba41-18ac3e98b574",
+      "id": "db0702e0-9bf0-44e3-92ab-41596a5a5565",
       "name": "3a. Convertir a CSV",
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
@@ -90,7 +90,7 @@
         "fileName": "/data/output/leads_calificados.csv",
         "options": {}
       },
-      "id": "b70ce145-8bae-41d7-9789-e77d5c10bdff",
+      "id": "88cad55e-9f03-41cf-af0a-b4896896a66d",
       "name": "Guardar leads_calificados.csv",
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
@@ -106,7 +106,7 @@
           "format": true
         }
       },
-      "id": "18699588-eba3-4d55-a453-0811000b8e0c",
+      "id": "9b36c4fe-03b4-4a50-bc69-b4034f387072",
       "name": "3b. Convertir a JSON",
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
@@ -121,7 +121,7 @@
         "fileName": "/data/output/leads_calificados.json",
         "options": {}
       },
-      "id": "24bd4954-1187-4ab4-8bc9-082b60724d66",
+      "id": "b610a91c-85f8-4d91-86b2-0dd59c3ba874",
       "name": "Guardar leads_calificados.json",
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
@@ -136,7 +136,7 @@
         "destinationFieldName": "leads_calificados",
         "options": {}
       },
-      "id": "760d5cf2-5055-462a-bcb7-fe1b025cb77f",
+      "id": "f51ec668-ea30-4ede-8bc4-d781ae5c7849",
       "name": "4a. Consolidar 13 Leads",
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
@@ -148,12 +148,12 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Actúa como un Director de Operaciones Comerciales (RevOps) asistiendo a Christian (líder comercial de DARHE).\n\nAquí tienes los 13 leads únicos ya limpios, deduplicados y calificados:\n{{ JSON.stringify($json.leads_calificados, null, 2) }}\n\nGenera el RESUMEN EJECUTIVO PARA CHRISTIAN de máximo 1 página en TEXTO PLANO (sin Markdown: nada de **, #, ` ni tablas), listo para pegarse en el cuerpo de un correo, usando lenguaje comercial claro y cero técnico:\n1. Panorama de entrada: cuántos registros llegaron, qué duplicados se fusionaron y qué basura se descartó.\n2. A quién llamar primero HOY (Los 4 Leads Categoría A + el referido VIP de 250 empleados de Categoría B), ordenados del #1 al #5 con su teléfono limpio, contexto del dolor y recomendación de abordaje.\n3. Casos que requieren validación humana de Christian antes de avanzar (los marcados con requiere_revision = true) explicando qué debe decidir en una línea.\n4. Seguimiento del resto de prospectos (Categoría B y C).",
+        "text": "=Aquí tienes los leads actuales ya limpios, deduplicados y calificados:\n{{ JSON.stringify($json.leads_calificados, null, 2) }}\n\nAnaliza los datos provistos y genera el RESUMEN EJECUTIVO PARA CHRISTIAN (máximo una página) con la siguiente estructura:\n\nASUNTO SUGERIDO: Plan de Llamadas y Priorización de Leads — DARHE\n\n1. PANORAMA DE ENTRADA: Resume la volumetría real basada en los datos (cuántos registros se procesaron en total, cuántos leads únicos quedaron tras la deduplicación y cuántos fueron descartados como spam/competencia).\n\n2. PRIORIDAD DE LLAMADAS PARA HOY: Identifica y ordena de mayor a menor prioridad los leads más urgentes o valiosos (Categoría A y prospectos de alto impacto o volumen de empleados de Categoría B). Para cada uno incluye: nombre, teléfono, contexto de su necesidad/dolor y una recomendación comercial rápida de abordaje.\n\n3. CASOS QUE REQUIEREN VALIDACIÓN HUMANA: Lista los leads que tengan la bandera \"requiere_revision\" como verdadera. Explica brevemente en una sola línea qué decisión debe tomar Christian en cada caso antes de avanzar.\n\n4. SEGUIMIENTO DEL RESTO DE PROSPECTOS: Indica brevemente qué estrategia seguir con los leads restantes de menor urgencia (Categorías B y C).\n",
         "options": {
-          "systemMessage": "=Actúa como un Director de Operaciones Comerciales (RevOps) asistiendo a Christian (líder comercial de DARHE).\n\nAquí tienes los 13 leads únicos ya limpios, deduplicados y calificados:\n{{ JSON.stringify($json.leads_calificados, null, 2) }}\n\nGenera el RESUMEN EJECUTIVO PARA CHRISTIAN de máximo 1 página en TEXTO PLANO (sin formato Markdown, sin usar asteriscos **, ni almohadillas #), diseñado para enviarse directamente como el cuerpo de un correo electrónico ejecutivo, usando lenguaje comercial claro y cero técnico:\n\nASUNTO SUGERIDO: Plan de Llamadas y Priorización de Leads — DARHE\n\n1. PANORAMA DE ENTRADA: cuántos registros llegaron (15), qué duplicados se fusionaron (13 únicos) y qué basura se descartó.\n2. A QUIÉN LLAMAR PRIMERO HOY (Los 4 Leads Categoría A + el referido VIP de 250 empleados de Categoría B), ordenados del 1 al 5 con su teléfono limpio, contexto del dolor y recomendación de abordaje.\n3. CASOS QUE REQUIEREN TU VALIDACIÓN HUMANA ANTES DE AVANZAR (los marcados con requiere_revision = true) explicando en una línea qué debe decidir Christian.\n4. SEGUIMIENTO DEL RESTO DE PROSPECTOS (Categoría B y C)."
+          "systemMessage": "=Actúas como un Director de Operaciones Comerciales (RevOps) asistiendo a Christian, líder comercial de DARHE. \n\nTu tarea es procesar un listado dinámico de leads calificados y generar un resumen ejecutivo directo, estratégico y con lenguaje comercial (cero técnico).\n\nREGLA ESTRICTA DE FORMATO: Devuelve la respuesta únicamente en TEXTO PLANO. Está estrictamente prohibido usar formato Markdown (nada de asteriscos **, almohadillas #, guiones bajos _, comillas invertidas ` ni tablas). Usa saltos de línea y mayúsculas para estructurar el mensaje, simulando el cuerpo de un correo electrónico formal listo para enviar.\n"
         }
       },
-      "id": "7e57b3cd-f2d0-441f-8fc3-42c4c8ea342a",
+      "id": "3269db87-8845-45d3-b547-f88a14b20163",
       "name": "4b. Agente IA - Resumen Christian",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
@@ -167,7 +167,7 @@
       "parameters": {
         "jsCode": "// Toma el texto del Agente IA o, si falla / no hay API Key, sintetiza un resumen en TEXTO PLANO desde los leads\nconst agentOut = $input.first()?.json?.output || $input.first()?.json?.text;\nconst leads = $('4a. Consolidar 13 Leads').first().json.leads_calificados || [];\n\n// Quita cualquier rastro de Markdown que el LLM pudiera colar\nconst stripMd = s => s\n  .replace(/\\*\\*(.*?)\\*\\*/g, '$1')\n  .replace(/^#{1,6}\\s*/gm, '')\n  .replace(/`/g, '')\n  .replace(/^\\s*[*-]\\s+/gm, '- ');\n\nlet texto = '';\n\nif (agentOut && typeof agentOut === 'string' && agentOut.trim().length > 100) {\n  texto = stripMd(agentOut.trim());\n} else {\n  const catA = leads.filter(l => l.calificacion === 'A');\n  const catB = leads.filter(l => l.calificacion === 'B');\n  const catC = leads.filter(l => l.calificacion === 'C');\n  const desc = leads.filter(l => l.calificacion === 'Descartado');\n  const dups = leads.filter(l => l.duplicado_de);\n  const rev = leads.filter(l => l.requiere_revision === true);\n  const vipB = catB.find(l => Number(l.num_empleados_estimado) >= 200 || /referido/i.test(l.fuente));\n\n  const L = [];\n  L.push('ASUNTO: Plan de llamadas y priorización de leads - DARHE');\n  L.push('');\n  L.push('Hola Christian,');\n  L.push('');\n  L.push(`Procesamos el lote de prospectos. Quedaron ${leads.length} contactos únicos (se unieron ${dups.length} personas que escribieron por más de un canal): ${catA.length} prioridad A, ${catB.length} B, ${catC.length} C y ${desc.length} descartados.`);\n  L.push('');\n  L.push('1. A QUIÉN LLAMAR PRIMERO');\n  let rank = 1;\n  for (const l of [...catA, ...(vipB ? [vipB] : [])]) {\n    L.push(`${rank}) ${l.nombre} - ${l.empresa} (${l.ciudad}). Tel: ${l.telefono || 'sin teléfono'}`);\n    L.push(`   Por qué: ${l.razon}`);\n    L.push(`   Siguiente paso: ${l.siguiente_accion}`);\n    rank++;\n  }\n  L.push('');\n  L.push('2. NECESITO TU VISTO BUENO ANTES DE CONTACTAR');\n  for (const r of rev) L.push(`- ${r.nombre} (${r.empresa}, ${r.calificacion}): ${r.motivo_revision}`);\n  L.push('');\n  L.push('3. RESTO DE PROSPECTOS');\n  for (const b of catB.filter(x => !vipB || x.id !== vipB.id)) L.push(`- B | ${b.nombre} (${b.empresa}): ${b.razon}`);\n  for (const c of catC) L.push(`- C | ${c.nombre} (${c.empresa}): ${c.razon}`);\n  for (const d of desc) L.push(`- Descartado | ${d.nombre} (${d.empresa}): ${d.razon}`);\n  L.push('');\n  L.push('Ningún lead se contacta sin tu validación.');\n  texto = L.join('\\n');\n}\n\nreturn [{\n  json: {\n    status: 'success',\n    total_leads_unicos: leads.length,\n    archivos_generados: [\n      '/data/output/leads_calificados.csv',\n      '/data/output/leads_calificados.json',\n      '/data/output/resumen_christian.txt'\n    ],\n    resumen_christian_texto: texto,\n    leads_calificados: leads\n  },\n  binary: {\n    data: {\n      data: Buffer.from(texto, 'utf-8').toString('base64'),\n      mimeType: 'text/plain',\n      fileName: 'resumen_christian.txt'\n    }\n  }\n}];"
       },
-      "id": "1e0efd8c-528d-49b2-82ec-cbbda7367c2b",
+      "id": "4452ddfa-36a6-481c-ba41-36374da44fcf",
       "name": "4c. Empaquetar resumen_christian.txt",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -182,7 +182,7 @@
         "fileName": "/data/output/resumen_christian.txt",
         "options": {}
       },
-      "id": "1683bee2-c902-4a47-b08b-18fa788dbd22",
+      "id": "4a5a29fd-3a56-4ef9-8ff9-58f8b8cfbacf",
       "name": "Guardar resumen_christian.txt",
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
@@ -197,7 +197,7 @@
         "responseBody": "={{ {\n  status: 'ok',\n  mensaje: 'Pipeline DARHE ejecutado. Archivos CSV, JSON y Resumen TXT generados en /data/output/',\n  total_leads_unicos: $('4c. Empaquetar resumen_christian.txt').first().json.total_leads_unicos,\n  archivos_escritos: $('4c. Empaquetar resumen_christian.txt').first().json.archivos_generados,\n  resumen_christian: $('4c. Empaquetar resumen_christian.txt').first().json.resumen_christian_texto,\n  leads_calificados: $('4c. Empaquetar resumen_christian.txt').first().json.leads_calificados\n} }}",
         "options": {}
       },
-      "id": "8532cbde-da54-4a89-98e0-da7db5caf999",
+      "id": "e9efc5dc-930c-4e4b-aa17-2d3de9cd9d5c",
       "name": "5. Responder al Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
@@ -217,7 +217,7 @@
         -16,
         720
       ],
-      "id": "453e72df-358d-4f69-9e6f-959463642737",
+      "id": "ed356788-923d-4055-a557-59cea8f6fec3",
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
@@ -241,14 +241,14 @@
         -800,
         352
       ],
-      "id": "94def3a9-3344-40cb-a974-9160b7f79673",
+      "id": "a4e9dca0-e257-4651-91c6-b668a829abce",
       "name": "AI Agent"
     },
     {
       "parameters": {
         "jsCode": "// NODO 2: SOLO LIMPIEZA, NORMALIZACIÓN Y DEDUPLICACIÓN (SURVIVORSHIP)\nconst items = $input.all().map(i => i.json);\n\nfunction isNullOrEmpty(val) {\n  if (val === null || val === undefined) return true;\n  const s = String(val).trim().toLowerCase();\n  return s === '' || s === 'nan' || s === 'null' || s === 'none';\n}\n\nfunction cleanBOM(val) {\n  return String(val || '').replace(/^\\ufeff/, '').trim();\n}\n\nfunction normalizeName(name) {\n  if (isNullOrEmpty(name)) return '';\n  const str = cleanBOM(name);\n  if (str === str.toUpperCase()) {\n    return str.toLowerCase().replace(/(?:^|\\s|\\S)\\S/g, a => a.toUpperCase());\n  }\n  return str;\n}\n\nfunction normalizePhone(val) {\n  if (isNullOrEmpty(val)) return null;\n  let digits = String(val).replace(/\\D/g, '');\n  if (!digits || /^0+$/.test(digits) || digits.length < 10) return null;\n  if (digits.length === 12 && digits.startsWith('52')) digits = digits.slice(2);\n  if (digits.length === 10) return `+52${digits}`;\n  return null;\n}\n\nfunction isValidEmail(val) {\n  if (isNullOrEmpty(val)) return false;\n  const s = String(val).trim().toLowerCase();\n  return /^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$/.test(s);\n}\n\nfunction normalizeSegment(val) {\n  if (isNullOrEmpty(val)) return 'desconocido';\n  const s = String(val).trim().toLowerCase();\n  const map = {\n    'transportista': 'transportista',\n    'transportistas': 'transportista',\n    'restaurantero': 'restaurantero',\n    'restauranteros': 'restaurantero',\n    'restaurant': 'restaurantero',\n    'construcción': 'construcción',\n    'construccion': 'construcción',\n    'empresario': 'empresario',\n    'empresarios': 'empresario',\n    'hotelería': 'hotelería',\n    'hoteleria': 'hotelería'\n  };\n  return map[s] || s;\n}\n\nfunction hasAccents(str) {\n  return /[áéíóúñÁÉÍÓÚÑ]/.test(str || '');\n}\n\n// 1. Normalización fila por fila\nconst normalized = items.map(r => {\n  const rawId = r.id !== undefined ? r.id : r['\\ufeffid'];\n  const rawEmp = r.num_empleados;\n  let empNum = null;\n  let empDatoOriginal = !isNullOrEmpty(rawEmp) ? cleanBOM(rawEmp) : null;\n\n  if (empDatoOriginal !== null) {\n    const parsed = parseInt(empDatoOriginal, 10);\n    if (!isNaN(parsed)) empNum = parsed;\n  }\n\n  const rawEmail = !isNullOrEmpty(r.email) ? String(r.email).trim().toLowerCase() : null;\n  const emailOk = isValidEmail(rawEmail);\n\n  return {\n    id: Number(cleanBOM(rawId)),\n    fecha: cleanBOM(r.fecha),\n    nombre: normalizeName(r.nombre),\n    empresa: !isNullOrEmpty(r.empresa) ? cleanBOM(r.empresa) : '',\n    email: emailOk ? rawEmail : '',\n    email_invalido_detectado: (!emailOk && rawEmail) ? rawEmail : '',\n    telefono: normalizePhone(r.telefono) || '',\n    segmento: normalizeSegment(r.segmento),\n    num_empleados_reportado: empNum,\n    num_empleados_raw: empDatoOriginal,\n    ciudad: !isNullOrEmpty(r.ciudad) ? cleanBOM(r.ciudad) : '',\n    fuente: !isNullOrEmpty(r.fuente) ? cleanBOM(r.fuente) : '',\n    mensaje: !isNullOrEmpty(r.mensaje) ? cleanBOM(r.mensaje) : ''\n  };\n});\n\n// 2. Fusión de duplicados por teléfono (Field-Level Survivorship)\nconst mergedMap = new Map();\n\nfor (const r of normalized) {\n  const key = r.telefono !== '' ? r.telefono : `no_phone_${r.id}`;\n  const msgEntry = `[${r.fecha} - ${r.fuente}]: ${r.mensaje}`;\n\n  if (!mergedMap.has(key)) {\n    mergedMap.set(key, {\n      ...r,\n      duplicado_de: '',\n      emails_alternativos: [],\n      mensajes_unidos: [msgEntry],\n      mensaje: msgEntry\n    });\n  } else {\n    const master = mergedMap.get(key);\n    master.duplicado_de = master.duplicado_de ? `${master.duplicado_de},${r.id}` : String(r.id);\n\n    if (!hasAccents(master.nombre) && hasAccents(r.nombre)) master.nombre = r.nombre;\n    if (r.empresa && (!master.empresa || r.empresa.length > master.empresa.length)) master.empresa = r.empresa;\n    if (!master.email && r.email) master.email = r.email;\n    else if (master.email && r.email && master.email !== r.email) master.emails_alternativos.push(r.email);\n    if (master.num_empleados_reportado === null && r.num_empleados_reportado !== null) {\n      master.num_empleados_reportado = r.num_empleados_reportado;\n    }\n    if (r.fuente && !master.fuente.includes(r.fuente)) master.fuente = `${master.fuente}, ${r.fuente}`;\n\n    master.mensajes_unidos.push(msgEntry);\n    master.mensaje = master.mensajes_unidos.join(' | ');\n  }\n}\n\n// Devuelve los 13 leads limpios listos para que el Agente LLM los califique\nreturn Array.from(mergedMap.values()).map(lead => ({\n  json: {\n    id: lead.id,\n    duplicado_de: lead.duplicado_de,\n    fecha: lead.fecha,\n    nombre: lead.nombre,\n    empresa: lead.empresa,\n    email: lead.email,\n    telefono: lead.telefono,\n    segmento: lead.segmento,\n    num_empleados_reportado: lead.num_empleados_reportado,\n    num_empleados_raw: lead.num_empleados_raw,\n    ciudad: lead.ciudad,\n    fuente: lead.fuente,\n    mensaje: lead.mensaje\n  }\n}));"
       },
-      "id": "8cc66960-226d-4bd4-96f6-cb5a5bf68358",
+      "id": "7ec27dc9-5fb1-4ca0-8f43-93b649dcb6d0",
       "name": "2. Limpieza y Fusión",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -270,7 +270,7 @@
         -816,
         560
       ],
-      "id": "7cc32330-b1fa-417d-a420-8e7a1700d2ee",
+      "id": "649a98eb-1cd3-4a6e-9d27-bb843d44d2d3",
       "name": "Google Gemini Chat Model1",
       "credentials": {
         "googlePalmApi": {
@@ -289,7 +289,7 @@
         -608,
         560
       ],
-      "id": "d01cef4d-315b-4886-a444-0b7c7f3b30cf",
+      "id": "d60d34f9-1fb5-4524-90d0-7e6982af31a8",
       "name": "Structured Output Parser"
     },
     {
@@ -302,7 +302,7 @@
         -464,
         352
       ],
-      "id": "80cc3a29-9a75-4eef-a976-626a03717887",
+      "id": "9602ce1e-4908-461a-9c5f-4f2d9aab4d27",
       "name": "Desempaqueta Structured Output Parser"
     },
     {
@@ -539,7 +539,7 @@
         0,
         0
       ],
-      "id": "8c80a934-c32b-4082-8811-3e10982b5b56",
+      "id": "1fae6328-97cb-4bcd-ade5-087f99abd740",
       "name": "3c. Upsert Postgres leads_calificados",
       "credentials": {
         "postgres": {
@@ -754,15 +754,15 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "availableInMCP": false
   },
-  "versionId": "d73a28a9-4a6d-488d-a69b-ca4df65da8bb",
+  "versionId": "be9e910f-506f-4e55-afc1-65d3f92ca3da",
   "meta": {
-    "instanceId": "28f9c75e14a2a52bdb129ae2837268d3b64f0413c377f0b52f29e0c77f6ee050"
+    "instanceId": "6517da62f22971bfcc6caa734fe509cbb74859337325ed6bdf18cee373676d11"
   },
-  "id": "e_8ky9DNKovSjQBPx-VL9",
+  "id": "2d64xRkW6cQ4gBD_n5E3D",
   "tags": []
 }

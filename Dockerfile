@@ -1,4 +1,4 @@
-FROM docker.n8n.io/n8nio/n8n:latest
+FROM n8nio/n8n:latest
 
 LABEL maintainer="Ulises Dan Arroyo Rojas"
 LABEL project="DARHE Leads Automation Pipeline"

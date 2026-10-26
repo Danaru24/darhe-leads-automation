@@ -50,10 +50,10 @@ graph TD
 
 ### Opción A: Prueba en Vivo en VPS (Cero instalación)
 El entorno está desplegado y activo para pruebas inmediatas:
-* **UI n8n / Endpoint Base:** `http://<IP_O_DOMINIO_VPS>:5677`
+* **UI n8n / Endpoint Base:** `http://69.48.201.220:5677`
 * **Disparar un lead de prueba al Webhook:**
   ```bash
-  curl -X POST http://<IP_O_DOMINIO_VPS>:5677/webhook/darhe-leads \
+  curl -X POST http://69.48.201.220:5677/webhook/darhe-leads \
     -H "Content-Type: application/json" \
     -d '{"leads": [{"id": 99, "fecha": "2026-10-25", "nombre": " ROBERTO DIAZ ", "empresa": "Autotransportes Díaz", "email": "rdiaz@transdiaz.mx", "telefono": "55 8899 7766", "segmento": "transportista", "num_empleados": "85", "ciudad": "Querétaro", "fuente": "WhatsApp", "mensaje": "Necesitamos controlar diésel y viáticos de 85 unidades, ¿tienen demo?"}]}'
   ```
